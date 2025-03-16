@@ -1,0 +1,79 @@
+<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+  <div class="space-y-8">
+    <div class="bg-white shadow sm:rounded-lg">
+      <div class="px-4 py-5 sm:p-6">
+        <h3 class="text-lg font-medium leading-6 text-gray-900">Create New Template</h3>
+        <div class="mt-5">
+          <.form :let={f} for={@new_template} phx-submit="save">
+            <div class="space-y-4">
+              <div>
+                <.input type="text" field={f[:name]} label="Name" />
+              </div>
+              <div>
+                <.input type="textarea" field={f[:body]} label="Body" rows={4} placeholder="Use [[today]] and [[model]] as placeholders" />
+              </div>
+              <div>
+                <.button type="submit" class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                  Create Template
+                </.button>
+              </div>
+            </div>
+          </.form>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white shadow sm:rounded-lg">
+      <div class="px-4 py-5 sm:p-6">
+        <h3 class="text-lg font-medium leading-6 text-gray-900">Templates</h3>
+        <div class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <%= for template <- @templates do %>
+            <div class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm hover:border-gray-400">
+              <div class="space-y-2">
+                <h4 class="text-lg font-semibold"><%= template.name %></h4>
+                <p class="text-sm text-gray-500"><%= template.body %></p>
+                <.button phx-click="select-template" phx-value-id={template.id} class="inline-flex items-center rounded-md border border-transparent bg-indigo-100 px-3 py-2 text-sm font-medium leading-4 text-indigo-700 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                  Run Template
+                </.button>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <%= if @selected_template do %>
+      <div class="bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <div class="flex justify-between items-center">
+            <h3 class="text-lg font-medium leading-6 text-gray-900">Run Template: <%= @selected_template.name %></h3>
+            <.button phx-click="clear-selection" class="text-sm text-gray-500 hover:text-gray-700">× Close</.button>
+          </div>
+          <div class="mt-5">
+            <.form :let={_f} for={%{}} phx-submit="process">
+              <div class="space-y-4">
+                <div>
+                  <.input type="text" name="model" value={@model_input} label="Model" />
+                </div>
+                <div>
+                  <.button type="submit" class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                    Process Template
+                  </.button>
+                </div>
+              </div>
+            </.form>
+
+            <%= if @processed_prompt do %>
+              <div class="mt-4">
+                <h4 class="text-sm font-medium text-gray-700">Processed Result:</h4>
+                <div class="mt-2 rounded-md bg-gray-50 p-4">
+                  <pre class="text-sm text-gray-900 whitespace-pre-wrap"><%= @processed_prompt %></pre>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
